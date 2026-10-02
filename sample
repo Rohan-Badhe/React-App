@@ -1,0 +1,421 @@
+
+// "use client";
+
+// import { useState } from "react";
+// import type { SyntheticEvent } from "react";
+
+// import {
+//   Activity,
+//   ArrowRight,
+//   Eye,
+//   EyeOff,
+//   ShieldCheck,
+//   LoaderCircle,
+// } from "lucide-react";
+
+// import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+// import { Label } from "@/components/ui/label";
+
+// // API Configuration
+// const LOGIN_API_URL = "https://api.xoomgrid.com/users/loginuser";
+
+// export default function LoginPage() {
+//   // Form states
+//   const [username, setUsername] = useState("");
+//   const [password, setPassword] = useState("");
+
+//   // UI states
+//   const [showPassword, setShowPassword] = useState(false);
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState("");
+//   const [success, setSuccess] = useState("");
+
+//   // Login API handler
+//   const handleLogin = async (
+//     e: SyntheticEvent<HTMLFormElement>
+//   ) => {
+//     e.preventDefault();
+
+//     setError("");
+//     setSuccess("");
+//     setLoading(true);
+
+//     try {
+//       // API payload
+//      const payload = {
+//   employee_id: username.trim(),
+//   password: password,
+// };
+
+//       // POST API request
+//       const response = await fetch(LOGIN_API_URL, {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify(payload),
+//       });
+
+//       // Read response safely
+//       const responseText = await response.text();
+
+//       let data: {
+//         message?: string;
+//         accessToken?: string;
+//         access_token?: string;
+//         token?: string;
+//       } | null = null;
+
+//       try {
+//         data = responseText
+//           ? JSON.parse(responseText)
+//           : null;
+//       } catch {
+//         // Response was not valid JSON
+//       }
+
+//       // Handle API errors
+//       if (!response.ok) {
+//         const errorMessage =
+//           data?.message ||
+//           (responseText && responseText.length < 500
+//             ? responseText
+//             : `Request failed with status ${response.status}`);
+
+//         throw new Error(errorMessage);
+//       }
+
+//       // Read access token
+//       const accessToken =
+//         data?.accessToken ||
+//         data?.access_token ||
+//         data?.token;
+
+//       // Store token when provided by the API
+//       if (accessToken) {
+//         localStorage.setItem("accessToken", accessToken);
+//       }
+
+//       setSuccess("Login successful!");
+
+//       if (!accessToken) {
+//         console.warn(
+//           "Login succeeded, but no recognized access token field was returned."
+//         );
+//       }
+
+//     } catch (err) {
+//       console.error("Login request failed:", err);
+
+//       if (err instanceof TypeError) {
+//         setError(
+//           "Unable to connect to the server. Check your internet connection or API CORS configuration."
+//         );
+//       } else {
+//         setError(
+//           err instanceof Error
+//             ? err.message
+//             : "Something went wrong. Please try again."
+//         );
+//       }
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <main className="min-h-screen bg-[#F5F1FC] p-0 lg:p-5">
+
+//       <div className="grid min-h-screen overflow-hidden bg-white lg:min-h-[calc(100vh-40px)] lg:grid-cols-[1.05fr_0.95fr] lg:rounded-xl lg:border lg:border-[#E9E2F3] lg:shadow-sm">
+
+//         {/* LEFT BRANDING PANEL */}
+
+//         <section
+//           className="relative flex min-h-105 flex-col justify-between overflow-hidden px-8 py-9 text-white sm:px-12 sm:py-12 lg:min-h-full lg:px-16 lg:py-14"
+//           style={{
+//             backgroundColor: "#30204F",
+//             backgroundImage: `
+//               radial-gradient(
+//                 ellipse at 15% 15%,
+//                 rgba(167, 139, 250, 0.30),
+//                 transparent 48%
+//               ),
+//               radial-gradient(
+//                 ellipse at 85% 85%,
+//                 rgba(196, 181, 253, 0.20),
+//                 transparent 45%
+//               ),
+//               linear-gradient(
+//                 145deg,
+//                 #30204F 0%,
+//                 #39265D 55%,
+//                 #24183C 100%
+//               )
+//             `,
+//           }}
+//         >
+
+//           {/* Subtle grid background */}
+
+//           <div className="pointer-events-none absolute inset-0 opacity-[0.07]">
+//             <div
+//               className="absolute inset-0"
+//               style={{
+//                 backgroundImage:
+//                   "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+//                 backgroundSize: "48px 48px",
+//               }}
+//             />
+//           </div>
+
+//           {/* Brand identity */}
+
+//           <div className="relative z-10">
+//             <div className="flex items-center gap-3">
+
+//               <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/15 bg-white/10">
+//                 <Activity className="h-5 w-5 text-[#D8C7FF]" />
+//               </div>
+
+//               <div>
+//                 <p className="text-sm font-semibold tracking-[0.12em]">
+//                   SMART MONITORING
+//                 </p>
+
+//                 <p className="mt-0.5 text-[10px] tracking-[0.18em] text-[#C7B8DD]">
+//                   SYSTEM PLATFORM
+//                 </p>
+//               </div>
+
+//             </div>
+//           </div>
+
+//           {/* Main branding content */}
+
+//           <div className="relative z-10 my-12 max-w-xl lg:my-0">
+
+//             <p className="mb-5 text-xs font-semibold tracking-[0.22em] text-[#D8C7FF]">
+//               MONITOR. ANALYZE. CONTROL.
+//             </p>
+
+//             <h1 className="max-w-lg text-4xl font-semibold leading-[1.15] tracking-tight sm:text-5xl">
+//               A clearer view of your operations.
+//             </h1>
+
+//             <p className="mt-6 max-w-md text-sm leading-7 text-[#DED5ED] sm:text-base">
+//               Access your monitoring workspace to track activity,
+//               review important information and stay connected
+//               with your operations.
+//             </p>
+
+//             <div className="mt-10 flex items-center gap-3 border-t border-white/15 pt-7">
+
+//               <ShieldCheck className="h-5 w-5 text-[#D8C7FF]" />
+
+//               <p className="text-xs text-[#DED5ED]">
+//                 Secure access to your monitoring environment
+//               </p>
+
+//             </div>
+
+//           </div>
+
+//           {/* Footer */}
+
+//           <div className="relative z-10 hidden items-center justify-between text-[11px] text-[#C7B8DD] lg:flex">
+//             <span>SMART MONITORING SYSTEM</span>
+//             <span>SECURE WORKSPACE</span>
+//           </div>
+
+//         </section>
+
+//         {/* RIGHT LOGIN PANEL */}
+
+//         <section className="relative flex items-center justify-center overflow-hidden bg-[#FBF9FF] px-6 py-14 sm:px-12 lg:px-16 xl:px-24">
+
+//           {/* Subtle lavender radial background */}
+
+//           <div
+//             className="pointer-events-none absolute inset-0"
+//             style={{
+//               backgroundImage: `
+//                 radial-gradient(
+//                   circle at 90% 5%,
+//                   rgba(196, 181, 253, 0.23),
+//                   transparent 35%
+//                 ),
+//                 radial-gradient(
+//                   circle at 5% 95%,
+//                   rgba(221, 214, 254, 0.28),
+//                   transparent 38%
+//                 )
+//               `,
+//             }}
+//           />
+
+//           <div className="relative z-10 w-full max-w-97.5">
+
+//             {/* Login heading */}
+
+//             <div className="mb-10">
+
+//               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#8063B5]">
+//                 Account Access
+//               </p>
+
+//               <h2 className="text-3xl font-semibold tracking-tight text-[#282038]">
+//                 Welcome back
+//               </h2>
+
+//               <p className="mt-3 text-sm leading-6 text-[#81798D]">
+//                 Enter your credentials to sign in to your account.
+//               </p>
+
+//             </div>
+
+//             {/* Login form */}
+
+//             <form onSubmit={handleLogin} className="space-y-6">
+
+//               {/* Username field */}
+
+//               <div className="space-y-2">
+
+//                 <Label
+//                   htmlFor="username"
+//                   className="text-sm font-medium text-[#3C334A]"
+//                 >
+//                   Username
+//                 </Label>
+
+//                 <Input
+//                   id="username"
+//                   name="username"
+//                   type="text"
+//                   placeholder="Enter your username"
+//                   value={username}
+//                   onChange={(e) => setUsername(e.target.value)}
+//                   autoComplete="username"
+//                   required
+//                   disabled={loading}
+//                   className="h-12 rounded-md border-[#E2DCEB] bg-white px-4 text-sm shadow-none placeholder:text-[#A69DAF] focus-visible:border-[#8063B5] focus-visible:ring-[#8063B5]/20"
+//                 />
+
+//               </div>
+
+//               {/* Password field */}
+
+//               <div className="space-y-2">
+
+//                 <Label
+//                   htmlFor="password"
+//                   className="text-sm font-medium text-[#3C334A]"
+//                 >
+//                   Password
+//                 </Label>
+
+//                 <div className="relative">
+
+//                   <Input
+//                     id="password"
+//                     name="password"
+//                     type={showPassword ? "text" : "password"}
+//                     placeholder="Enter your password"
+//                     value={password}
+//                     onChange={(e) => setPassword(e.target.value)}
+//                     autoComplete="current-password"
+//                     required
+//                     disabled={loading}
+//                     className="h-12 rounded-md border-[#E2DCEB] bg-white px-4 pr-12 text-sm shadow-none placeholder:text-[#A69DAF] focus-visible:border-[#8063B5] focus-visible:ring-[#8063B5]/20"
+//                   />
+
+//                   <button
+//                     type="button"
+//                     onClick={() => setShowPassword(!showPassword)}
+//                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[#958AA3] transition-colors hover:text-[#5B3B8C]"
+//                     aria-label={
+//                       showPassword ? "Hide password" : "Show password"
+//                     }
+//                   >
+//                     {showPassword ? (
+//                       <EyeOff className="h-4 w-4" />
+//                     ) : (
+//                       <Eye className="h-4 w-4" />
+//                     )}
+//                   </button>
+
+//                 </div>
+
+//               </div>
+
+//               {/* Error message */}
+
+//               {error && (
+//                 <div
+//                   role="alert"
+//                   className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+//                 >
+//                   {error}
+//                 </div>
+//               )}
+
+//               {/* Success message */}
+
+//               {success && (
+//                 <div
+//                   role="status"
+//                   className="rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+//                 >
+//                   {success}
+//                 </div>
+//               )}
+
+//               {/* Login button */}
+
+//               <Button
+//                 type="submit"
+//                 disabled={loading || !username.trim() || !password}
+//                 className="h-12 w-full rounded-md bg-[#5B3B8C] text-sm font-medium text-white shadow-none transition-colors hover:bg-[#4A2F73] disabled:opacity-60"
+//               >
+
+//                 {loading ? (
+//                   <>
+//                     <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+//                     Signing in...
+//                   </>
+//                 ) : (
+//                   <>
+//                     Sign in to workspace
+//                     <ArrowRight className="ml-2 h-4 w-4" />
+//                   </>
+//                 )}
+
+//               </Button>
+
+//             </form>
+
+//             {/* Footer */}
+
+//             <div className="mt-10 border-t border-[#EAE4F1] pt-6">
+
+//               {/* <p className="text-center text-xs leading-5 text-[#958DA0]">
+//                 Authorized personnel only. Your access is
+//                 protected by secure authentication.
+//               </p> */}
+
+//             </div>
+
+//           </div>
+
+//         </section>
+
+//       </div>
+
+//     </main>
+//   );
+// }
+
+
+
+ 
